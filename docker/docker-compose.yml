@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  airflow_postgres:
+    image: postgres:9.6.2
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - "airflow_dbdata:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+  airflow_webserver:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: always
+    volumes:
+      - ../airflow.cfg:/opt/airflow/airflow.cfg
+      - ../dags:/opt/airflow/dags
+      - ../plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    # command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /opt/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+volumes:
+  airflow_dbdata:

@@ -7,4 +7,6 @@
 # : "${POSTGRES_DB:="airflow"}"
 
 airflow initdb
-airflow webserver
+
+sleep 5
+airflow scheduler & airflow webserver
